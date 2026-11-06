@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Saffron Pop-up</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Alex+Brush&family=Vazirmatn:wght@500;700&family=Rakkas&display=swap">
+<style>
+  /* Layout: three short click-through screens in the ABBY MOOD space look:
+     near-black ground, white Inter type, uppercase tight headlines, white pill buttons.
+     Saffron gold is the one accent, used sparingly. */
+  :root {
+    --ink:      #0A0A0A;   /* page */
+    --dark:     #121212;   /* cards */
+    --raised:   #1E1E1E;   /* small tiles */
+    --white:    #FFFFFF;
+    --light:    #A8A8A8;   /* secondary text */
+    --line:     #FFFFFF2E;
+    --saffron:  #F5B324;   /* the one accent */
+    --crocus:   #B983CC;   /* crocus purple, lightened to read on black */
+    --crocus-deep: #7B3F8C; /* poster purple, for the main button */
+    --lavender: #D9C2E6;    /* soft purple for the journey circles */
+    --lavender-muted: #BBA6C8; /* small text on the journey screen */
+    --error:    #FF6B6B;
+
+    --font:   "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --script: "Alex Brush", "Brush Script MT", "Segoe Script", cursive;
+    --fa:     "Vazirmatn", Tahoma, "Noto Naskh Arabic", sans-serif;
+
+    --radius: 12px;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden;
+    background: var(--ink); color: var(--white);
+    font-family: var(--font); font-size: 16px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  :focus-visible { outline: 2px solid var(--saffron); outline-offset: 3px; border-radius: 6px; }
+
+  .app {
+    height: 100%; max-width: 480px; margin: 0 auto;
+    display: flex; flex-direction: column;
+    padding-left: max(12px, env(safe-area-inset-left, 0px), 16px);
+    padding-right: max(12px, env(safe-area-inset-right, 0px), 16px);
+    padding-block: 10px 14px;
+  }
+
+  /* ---------- Header ---------- */
+  .top { display: flex; justify-content: space-between; align-items: center; flex: none; height: 36px; }
+  .logo { font-weight: 700; font-size: 20px; letter-spacing: -.04em; text-transform: uppercase; line-height: 1; }
+  .logo sup { font-size: 8px; font-weight: 500; letter-spacing: 0; vertical-align: top; margin-left: 1px; }
+  .tag { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--saffron); }
+
+  .progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; flex: none; margin-top: 6px; }
+  .progress button { height: 18px; border: 0; padding: 0; background: none; cursor: pointer; display: grid; align-items: center; }
+  .progress button::before { content: ""; height: 2px; background: var(--line); }
+  .progress button.on::before { background: var(--white); }
+
+  /* ---------- Screens ---------- */
+  .screens { flex: 1; min-height: 0; position: relative; margin-top: 10px; }
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+
+  /* Title set like the poster: heavy, mixed case, "Saffron" indented, a faded echo behind it */
+  .title {
+    position: relative; display: grid; flex: none;
+    font-weight: 900; font-size: clamp(56px, 18vw, 82px); line-height: .84; letter-spacing: -.065em;
+    padding-top: .2em;
+  }
+  .title .l1, .title .l2 { position: relative; }
+  .title .l1 { padding-left: .5em; }
+  .title .ghost {
+    position: absolute; left: .3em; top: 0; font-size: .8em;
+    color: rgba(255,255,255,.2); text-shadow: .07em .05em 0 rgba(255,255,255,.12);
+  }
+  .sub { flex: none; font-size: 14px; font-weight: 600; letter-spacing: .02em; color: var(--crocus); margin-top: -4px; }
+  .title-old {
+  }
+  .title small { display: block; font-size: 14px; font-weight: 600; letter-spacing: .02em; text-transform: none; color: var(--crocus); margin-top: 10px; line-height: 1.4; }
+
+  .media { flex: 1; min-height: 220px; position: relative; overflow: hidden; border-radius: var(--radius); background: var(--dark); }
+  .panel { background: var(--saffron) url("img/saffron-texture.jpg") center / cover; }
+  /* the whole crocus stays in frame, like the poster */
+  .panel .crocus { position: absolute; inset: 11% 2% 0 8%; width: 92%; height: 89%; max-width: none; object-fit: contain; object-position: right bottom; }
+  .panel .script-off {
+    position: absolute; left: 14px; bottom: 12px; margin: 0;
+    font-family: var(--script); font-size: clamp(28px, 8.5vw, 38px); line-height: 1; color: var(--white);
+    text-shadow: 0 2px 10px rgba(10,10,10,.45);
+  }
+
+  .media .shade { position: absolute; inset: 50% 0 0; background: linear-gradient(transparent, rgba(10,10,10,.72)); }
+  .media .fa { position: absolute; right: 16px; top: 14px; font-family: "Rakkas", var(--fa); font-weight: 400; font-size: clamp(26px, 7.5vw, 34px); line-height: 1.3; color: var(--ink); white-space: nowrap; }
+  .media .caption { position: absolute; left: 16px; right: 16px; bottom: 16px; }
+  .media .caption strong { display: block; font-size: clamp(24px, 7.5vw, 32px); font-weight: 700; text-transform: uppercase; letter-spacing: -.045em; line-height: 1; }
+  .media .caption small { display: block; margin-top: 8px; font-size: 14px; color: #FFFFFFE6; }
+  .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 58%; }
+  .photo .script {
+    position: absolute; left: 0; right: 0; top: 44%; transform: rotate(-3deg);
+    font-family: var(--script); font-size: clamp(30px, 9vw, 42px); text-align: center;
+    color: var(--white); text-shadow: 0 2px 12px rgba(10,10,10,.5);
+  }
+
+  /* Sign-up */
+  .signup {
+    flex: 1; background: var(--crocus-deep); border: 0;
+    --light: #EADCF0; --error: #FFD2D2;
+    border-radius: var(--radius); padding: 24px 20px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; gap: 18px;
+  }
+  .signup .flower { position: absolute; right: -40px; top: -20px; width: 46%; opacity: .2; transform: rotate(18deg); pointer-events: none; }
+  .signup > *:not(.flower) { position: relative; }
+  .signup h2 { font-size: clamp(30px, 9vw, 40px); font-weight: 700; text-transform: uppercase; letter-spacing: -.05em; line-height: .98; }
+  .signup .lead { color: var(--light); margin-top: 12px; }
+  .signup .lead strong { display: block; margin-top: 4px; color: var(--white); font-weight: 600; }
+  form { display: grid; gap: 12px; }
+  label.f { display: block; font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--light); margin-bottom: 6px; }
+  input[type="text"], input[type="email"] {
+    width: 100%; padding: 13px 15px; border-radius: 10px; border: 1px solid transparent;
+    background: var(--white); color: var(--ink); font: inherit; font-size: 17px;
+  }
+  input:focus { outline: none; border-color: var(--saffron); box-shadow: 0 0 0 2px var(--saffron); }
+  input[aria-invalid="true"] { box-shadow: 0 0 0 2px var(--error); }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--light); }
+  .check input { margin-top: 2px; width: 18px; height: 18px; flex: none; accent-color: var(--saffron); }
+  .err { color: var(--error); font-size: 14px; font-weight: 500; }
+  .micro { font-size: 12px; color: var(--light); }
+  .hint { font-size: 13px; line-height: 1.45; color: var(--light); padding-top: 14px; border-top: 1px solid rgba(255,255,255,.22); }
+  .hint strong { color: var(--saffron); font-weight: 600; }
+  .hint { display: grid; gap: 6px; }
+  .signup { flex: 1 0 auto; }
+  @media (max-height: 720px) {
+    .signup { gap: 12px; padding: 18px 18px; }
+    .signup h2 { font-size: 28px; }
+    .signup .lead { margin-top: 6px; }
+    form { gap: 9px; }
+    input[type="text"], input[type="email"] { padding: 11px 14px; }
+    .hint { padding-top: 10px; font-size: 12px; }
+  }
+  .thanks { display: grid; gap: 8px; }
+  .thanks .big { font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: -.04em; line-height: 1.02; color: var(--saffron); }
+  .thanks p { color: var(--light); }
+
+  /* Journey tiles */
+  .senses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: none; }
+  .sense { min-width: 0; display: grid; justify-items: center; gap: 8px; text-align: center; }
+  .ring {
+    width: 100%; max-width: 104px; aspect-ratio: 1; border-radius: 50%;
+    background: var(--lavender); color: var(--ink);
+    display: grid; place-content: center; gap: 2px;
+  }
+  .ring i { color: var(--crocus-deep) !important; }
+  .sense b { display: block; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+  .sense i { font-style: normal; font-family: "Rakkas", var(--fa); color: var(--saffron); font-size: 20px; line-height: 1.2; margin-top: 2px; }
+  .sense p { font-size: 12px; color: var(--lavender-muted); line-height: 1.35; }
+  .family { flex: none; font-size: 14px; color: var(--lavender-muted); text-align: center; padding-top: 12px; border-top: 1px solid rgba(217,194,230,.18); }
+  .family strong { color: var(--lavender); font-weight: 600; }
+  /* the journey photo fades into purple instead of black, so it meets the circles and button */
+  .photo .shade { background: linear-gradient(transparent, rgba(60,28,74,.88)); inset: 45% 0 0; }
+  .photo .script { color: #F3E9F8; }
+
+  /* ---------- Actions (white pills like the ABBY MOOD site) ---------- */
+  .actions { display: flex; gap: 10px; flex: none; margin-top: 14px; }
+  .btn {
+    flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+    border: 0; border-radius: 999px; padding: 14px 18px;
+    font: inherit; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: .02em;
+    cursor: pointer; text-decoration: none; transition: background .2s, color .2s;
+  }
+  .btn .arr { color: var(--saffron); font-size: 15px; }
+  .btn.primary { background: var(--white); color: var(--ink); }
+  .btn.primary:hover { background: var(--saffron); }
+  .btn.primary:hover .arr { color: var(--ink); }
+  .btn.gold { background: var(--saffron); color: var(--ink); }
+  .btn.gold .arr { color: var(--ink); }
+  .btn.gold:hover { background: #FFC94D; }
+  .btn.purple { background: var(--crocus-deep); color: var(--white); }
+  .btn.purple .arr { color: var(--white); }
+  .btn.purple:hover { background: #8E4FA1; }
+  .btn.ghost { flex: none; width: 50px; padding: 14px 0; background: transparent; color: var(--white); box-shadow: inset 0 0 0 1px var(--line); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--white); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="top">
+    <span class="logo">Abby Mood<sup>™</sup></span>
+    <span class="tag">Saffron</span>
+  </div>
+  <nav class="progress" aria-label="Screens">
+    <button type="button" data-go="concept" aria-label="The concept"></button>
+    <button type="button" data-go="join" aria-label="Join the saffron lovers"></button>
+    <button type="button" data-go="journey" aria-label="The saffron journey"></button>
+  </nav>
+
+  <div class="screens">
+    <!-- The concept -->
+    <section class="screen" data-view="concept" aria-label="The concept">
+      <h1 class="title" aria-label="Saffron Pop-up"><span class="ghost" aria-hidden="true">Saffron</span><span class="l1">Saffron</span><span class="l2">Pop-up</span></h1>
+      <p class="sub">December 2026 · ABBY MOOD space</p>
+      <div class="media panel" role="img" aria-label="Saffron ice cream with a purple crocus flower">
+        <img class="crocus" src="img/crocus.webp" alt="">
+        <div class="fa" lang="fa" dir="rtl">پاپ‌آپ زعفران</div>
+        <div class="shade"></div>
+        <div class="caption">
+          <strong>New concept, new products.</strong>
+          <small>Pure saffron, seasonal food and drinks.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sign up -->
+    <section class="screen" data-view="join" aria-label="Join the saffron lovers" hidden>
+      <div class="signup" id="signup">
+        <img class="flower" src="img/crocus-white.webp" alt="">
+        <div class="pre">
+          <h2>Join the saffron lovers</h2>
+          <p class="lead">Limited Saffron. Limited Spots.</p>
+        </div>
+        <form id="waitlist-form" novalidate>
+          <div><label class="f" for="name">Your name</label><input type="text" id="name" name="name" autocomplete="name" required></div>
+          <div><label class="f" for="email">Your email</label><input type="email" id="email" name="email" autocomplete="email" required></div>
+          <label class="check" for="interested">
+            <input type="checkbox" id="interested" name="interested" checked>
+            <span>I am interested in the concept and would like to hear more.</span>
+          </label>
+          <p class="err" role="alert" hidden></p>
+          <button class="btn gold" type="submit">Count me in <span class="arr" aria-hidden="true">→</span></button>
+          <p class="micro">We only use your email for updates about this pop-up.</p>
+        </form>
+        <div class="thanks" role="status" aria-live="polite" hidden>
+          <p class="big">Thank you.</p>
+          <p>We will send you more details very soon.</p>
+        </div>
+        <div class="hint">
+          <p><strong>Our first ever one-day pop-up is happening this December! ✨</strong></p>
+          <p>Can't make it in person? We've got you covered with a special Christmas Gift Box for those travelling over the holidays.</p>
+          <p>Just leave your name on the list. We'll bring the saffron magic to you. ❤️</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The saffron journey -->
+    <section class="screen" data-view="journey" aria-label="The saffron journey" hidden>
+      <div class="media photo">
+        <img src="img/saffron-taste.jpg" alt="A golden saffron ice cube held between lips">
+        <p class="script">We are saffron lovers!</p>
+        <div class="shade"></div>
+        <div class="caption"><strong>A journey with saffron</strong></div>
+      </div>
+      <div class="senses">
+        <div class="sense"><div class="ring"><b>Smell</b></div><i lang="fa">بو</i><p>Take your time with the aroma.</p></div>
+        <div class="sense"><div class="ring"><b>Taste</b></div><i lang="fa">طعم</i><p>Seasonal food and drinks.</p></div>
+        <div class="sense"><div class="ring"><b>Touch</b></div><i lang="fa">لمس</i><p>Hold the threads and cook with them.</p></div>
+      </div>
+      <p class="family"><strong>For family and friends.</strong> Bring someone who would enjoy it.</p>
+    </section>
+  </div>
+
+  <div class="actions" id="actions"></div>
+</div>
+
+<script>
+  // Replace with your real form endpoint (Google Form, Mailchimp, Tally, your own API).
+  // Leave empty to only save the entry in this browser for testing.
+  const WAITLIST_ENDPOINT = "";
+
+  const VIEWS = ["concept", "join", "journey"];
+  const ACTIONS = {
+    concept: `<a class="btn purple" href="#join">Join the saffron lovers <span class="arr" aria-hidden="true">→</span></a>`,
+    join:    `<a class="btn ghost" href="#concept" aria-label="Back">←</a><a class="btn gold" href="#journey">The saffron journey <span class="arr" aria-hidden="true">→</span></a>`,
+    journey: `<a class="btn ghost" href="#join" aria-label="Back">←</a><a class="btn purple" href="#join">Join the saffron lovers <span class="arr" aria-hidden="true">→</span></a>`
+  };
+  let current = "concept";
+
+  function show() {
+    const h = location.hash.slice(1);
+    current = VIEWS.includes(h) ? h : "concept";
+    document.querySelectorAll(".screen").forEach(s => { s.hidden = s.dataset.view !== current; });
+    const i = VIEWS.indexOf(current);
+    document.querySelectorAll(".progress button").forEach((b, n) => {
+      b.classList.toggle("on", n <= i);
+      if (n === i) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+    });
+    document.getElementById("actions").innerHTML = ACTIONS[current];
+  }
+  function go(step) {
+    const i = Math.min(VIEWS.length - 1, Math.max(0, VIEWS.indexOf(current) + step));
+    location.hash = VIEWS[i];
+  }
+  window.addEventListener("hashchange", show);
+  document.querySelectorAll(".progress button").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.go; }));
+  document.addEventListener("keydown", e => {
+    if (e.target.closest("input")) return;
+    if (e.key === "ArrowRight") go(1);
+    if (e.key === "ArrowLeft") go(-1);
+  });
+  // Swipe left / right
+  let sx = null, sy = null;
+  const screens = document.querySelector(".screens");
+  screens.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  screens.addEventListener("touchend", e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+    sx = null;
+  });
+  show();
+
+  /* ---- Sign-up ---- */
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const form = document.getElementById("waitlist-form");
+  const box = document.getElementById("signup");
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = form.elements.name.value.trim();
+    const email = form.elements.email.value.trim();
+    const err = form.querySelector(".err");
+    form.elements.name.setAttribute("aria-invalid", String(!name));
+    form.elements.email.setAttribute("aria-invalid", String(!emailRe.test(email)));
+    if (!name || !emailRe.test(email)) {
+      err.textContent = !name ? "Please add your name." : "Please add a valid email, like name@example.com.";
+      err.hidden = false;
+      return;
+    }
+    err.hidden = true;
+    const entry = { name, email, interested: form.elements.interested.checked, submittedAt: new Date().toISOString() };
+    if (WAITLIST_ENDPOINT) {
+      try { await fetch(WAITLIST_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(entry) }); }
+      catch (e2) { /* the thank-you still shows */ }
+    } else {
+      try {
+        const list = JSON.parse(localStorage.getItem("saffron-waitlist") || "[]");
+        list.push(entry);
+        localStorage.setItem("saffron-waitlist", JSON.stringify(list));
+      } catch (e2) { /* storage may be unavailable */ }
+    }
+    form.hidden = true;
+    box.querySelector(".pre").hidden = true;
+    box.querySelector(".thanks").hidden = false;
+  });
+</script>
+</body>
+</html>
